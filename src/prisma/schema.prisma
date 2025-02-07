@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model banneritems {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(255)
+  url  String @db.VarChar(255)
+}
+
+model commentfood {
+  food_id       Int
+  customer_id   Int
+  body          String   @db.VarChar(1000)
+  star_evaluate Int?     @db.SmallInt
+  customer      customer @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade, onUpdate: NoAction)
+  food          food     @relation(fields: [food_id], references: [food_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([food_id, customer_id])
+}
+
+model customer {
+  customer_id Int           @id @default(autoincrement())
+  email       String        @unique @db.VarChar(255)
+  password    String        @db.VarChar(255)
+  phone       String        @unique @db.VarChar(25)
+  address     String        @db.VarChar(255)
+  commentfood commentfood[]
+  orderfood   orderfood[]
+}
+
+model eatery {
+  eatery_id   Int      @id @default(autoincrement())
+  thumbnail   String   @db.VarChar(255)
+  name        String   @db.VarChar(255)
+  time_open   DateTime @db.Time(6)
+  time_close  DateTime @db.Time(6)
+  min_price   Int
+  max_price   Int
+  service_fee Float    @db.Real
+  description String?
+  branch      Json     @db.Json
+  food        food[]
+}
+
+model food {
+  food_id       Int           @id @default(autoincrement())
+  thumbnail     String        @db.VarChar(255)
+  description   String        @db.VarChar(1000)
+  name_food     String        @db.VarChar(255)
+  price         Int
+  is_stock      Boolean
+  featured      Boolean
+  promotion     String        @db.VarChar(255)
+  kind          String        @db.VarChar(100)
+  eatery_id     Int
+  menu_group_id Int
+  commentfood   commentfood[]
+  eatery        eatery        @relation(fields: [eatery_id], references: [eatery_id], onDelete: Cascade, onUpdate: NoAction)
+  menu_group    menu_group    @relation(fields: [menu_group_id], references: [menu_group_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model menu_group {
+  menu_group_id   Int    @unique @default(autoincrement())
+  name_menu_group String @db.VarChar(255)
+  eatery_id       Int
+  food            food[]
+}
+
+model orderfood {
+  order_id    Int          @id @default(autoincrement())
+  customer_id Int
+  total_price Int
+  items       Json         @db.Json
+  voucher     Json?        @db.Json
+  transport   Json         @db.Json
+  customer    customer     @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade, onUpdate: NoAction)
+  statusorder statusorder?
+}
+
+model statusorder {
+  order_id    Int       @id
+  state_ship1 String    @db.VarChar(255)
+  status1     Boolean
+  state_ship2 String    @db.VarChar(255)
+  status2     Boolean
+  state_ship3 String    @db.VarChar(255)
+  status3     Boolean
+  state_ship4 String    @db.VarChar(255)
+  status4     Boolean
+  state_ship5 String    @db.VarChar(255)
+  status5     Boolean
+  state_ship6 String    @db.VarChar(255)
+  status6     Boolean
+  orderfood   orderfood @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction)
+}
