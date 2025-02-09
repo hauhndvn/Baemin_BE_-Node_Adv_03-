@@ -5,6 +5,8 @@ import { FoodModule } from './food/food.module';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { PaginationLibsModule } from './pagination_libs/pagination_libs.module';
+import { CategoryModule } from './category/category.module';
+import { BanneritemModule } from './banneritem/banneritem.module';
 
 @Module({
   imports: [
@@ -12,6 +14,8 @@ import { PaginationLibsModule } from './pagination_libs/pagination_libs.module';
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     PaginationLibsModule,
+    CategoryModule,
+    BanneritemModule,
   ],
   controllers: [AppController],
   providers: [AppService],

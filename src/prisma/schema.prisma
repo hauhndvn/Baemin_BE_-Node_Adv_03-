@@ -13,6 +13,25 @@ model banneritems {
   url  String @db.VarChar(255)
 }
 
+model branch {
+  branch_id     Int     @unique @default(autoincrement())
+  branch_name   String  @db.VarChar(255)
+  address       String  @db.VarChar(700)
+  area_classify String  @db.VarChar(200)
+  featured      Boolean
+  thumbnail     String  @db.VarChar(255)
+  eatery_id     Int
+  eatery        eatery  @relation(fields: [eatery_id], references: [eatery_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model category {
+  category_id   Int     @unique @default(autoincrement())
+  category_name String  @db.VarChar(255)
+  description   String  @db.VarChar(1000)
+  cat_thumbnail String? @db.VarChar(255)
+  food          food[]
+}
+
 model commentfood {
   food_id       Int
   customer_id   Int
@@ -26,9 +45,9 @@ model commentfood {
 
 model customer {
   customer_id Int           @id @default(autoincrement())
-  email       String        @unique @db.VarChar(255)
+  email       String        @db.VarChar(255)
   password    String        @db.VarChar(255)
-  phone       String        @unique @db.VarChar(25)
+  phone       String        @db.VarChar(25)
   address     String        @db.VarChar(255)
   commentfood commentfood[]
   orderfood   orderfood[]
@@ -44,32 +63,26 @@ model eatery {
   max_price   Int
   service_fee Float    @db.Real
   description String?
-  branch      Json     @db.Json
+  address     String   @default("Đang cập nhật") @db.VarChar(500)
+  branch      branch[]
   food        food[]
 }
 
 model food {
-  food_id       Int           @id @default(autoincrement())
-  thumbnail     String        @db.VarChar(255)
-  description   String        @db.VarChar(1000)
-  name_food     String        @db.VarChar(255)
-  price         Int
-  is_stock      Boolean
-  featured      Boolean
-  promotion     String        @db.VarChar(255)
-  kind          String        @db.VarChar(100)
-  eatery_id     Int
-  menu_group_id Int
-  commentfood   commentfood[]
-  eatery        eatery        @relation(fields: [eatery_id], references: [eatery_id], onDelete: Cascade, onUpdate: NoAction)
-  menu_group    menu_group    @relation(fields: [menu_group_id], references: [menu_group_id], onDelete: Cascade, onUpdate: NoAction)
-}
-
-model menu_group {
-  menu_group_id   Int    @unique @default(autoincrement())
-  name_menu_group String @db.VarChar(255)
-  eatery_id       Int
-  food            food[]
+  food_id     Int           @id @default(autoincrement())
+  thumbnail   String        @db.VarChar(255)
+  description String        @db.VarChar(1000)
+  name_food   String        @db.VarChar(255)
+  price       Int
+  is_stock    Boolean
+  featured    Boolean
+  promotion   String        @db.VarChar(255)
+  kind        String        @db.VarChar(100)
+  eatery_id   Int
+  category_id Int
+  commentfood commentfood[]
+  category    category      @relation(fields: [category_id], references: [category_id], onDelete: Cascade, onUpdate: NoAction)
+  eatery      eatery        @relation(fields: [eatery_id], references: [eatery_id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model orderfood {
@@ -78,7 +91,7 @@ model orderfood {
   total_price Int
   items       Json         @db.Json
   voucher     Json?        @db.Json
-  transport   Json         @db.Json
+  logistics   Json         @db.Json
   customer    customer     @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade, onUpdate: NoAction)
   statusorder statusorder?
 }

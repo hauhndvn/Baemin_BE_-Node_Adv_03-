@@ -7,12 +7,10 @@ import {
   Param,
   Delete,
   Query,
-  Res,
 } from '@nestjs/common';
 import { FoodService } from './food.service';
 import { CreateFoodDto } from './dto/create-food.dto';
 import { UpdateFoodDto } from './dto/update-food.dto';
-import { Response } from 'express';
 
 @Controller('food')
 export class FoodController {
@@ -36,6 +34,22 @@ export class FoodController {
       featured,
       name_food,
     );
+  }
+
+  @Get('/eatery/:eatery_id')
+  findEatery(
+    @Param('eatery_id') eatery_id: number,
+    @Query('featured') featured?: string
+) {
+    return this.foodService.findEatery(Number(eatery_id), featured);
+  }
+
+  @Get('/category/:category_id')
+  findCategory(
+    @Param('category_id') category_id: number,
+    @Query('featured') featured?: string
+  ) {
+    return this.foodService.findCategory(Number(category_id), featured);
   }
 
   @Get(':id')
